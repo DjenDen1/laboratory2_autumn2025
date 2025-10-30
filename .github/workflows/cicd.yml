@@ -28,7 +28,7 @@ jobs:
         run: cmake --build build --config Release
 
       - name: List build contents (Windows)
-        run: dir build /B  
+        run: dir build\
 
       - name: Upload Windows Artifacts
         uses: actions/upload-artifact@v4

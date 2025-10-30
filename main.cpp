@@ -111,12 +111,7 @@ int main()
         
        // file.close();
         
-/*
-        std::sort(ip_pool.begin(), ip_pool.end(), 
-            [](const std::vector<std::string>& a, const std::vector<std::string>& b) {
-                return ip_to_tuple(a) > ip_to_tuple(b);
-            });
-*/      
+      
 
         std::sort(ip_pool.begin(), ip_pool.end(),compare_logicIPV);
 
