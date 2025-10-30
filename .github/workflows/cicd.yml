@@ -1,0 +1,103 @@
+name: CICD
+
+on:
+  push:
+    branches: 
+      - main
+
+jobs:
+  buildwindows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Configure Cmake
+        run: cmake -S . -B build
+        
+      - name: Build with Cmake
+        run: cmake --build build
+
+  buildlinux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: install dependencies (if any)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
+
+      - name: Configure CMake
+        run: cmake -S . -B build
+
+      - name: Build project
+        run: cmake --build build
+
+
+
+
+
+
+
+
+
+    name: C++ Build and Release
+
+    on:
+      push:
+        tags:
+          - 'v*.*.*' # Trigger on pushes to tags like v1.0.0
+
+    jobs:
+      build:
+        runs-on: ubuntu-latest # Use a Linux runner
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v4 # Use actions/checkout to get your code
+
+          - name: Install dependencies (if any)
+            run: |
+              sudo apt-get update
+              sudo apt-get install -y build-essential cmake # Example for CMake and basic build tools
+
+          - name: Configure and build C++ project
+            run: |
+              mkdir build
+              cd build
+              cmake .. # Assuming a CMake-based project
+              make -j$(nproc) # Build the project
+
+          - name: Upload build artifacts (optional)
+            uses: actions/upload-artifact@v4
+            with:
+              name: my-cpp-app
+              path: build/my_cpp_executable # Replace with your actual executable path
+
+      create-release:
+        needs: build # This job depends on the 'build' job completing successfully
+        runs-on: ubuntu-latest
+        if: startsWith(github.ref, 'refs/tags/v') # Only run if triggered by a tag push
+        steps:
+          - name: Download build artifacts
+            uses: actions/download-artifact@v4
+            with:
+              name: my-cpp-app
+
+          - name: Create GitHub Release
+            id: create_release
+            uses: softprops/action-gh-release@v1
+            with:
+              files: my_cpp_executable # Attach your executable to the release
+              tag_name: ${{ github.ref_name }}
+              name: Release ${{ github.ref_name }}
+              body: |
+                ## Release Notes
+                This is a new release of my C++ application.
+              draft: false
+              prerelease: false
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Provided by GitHub Actions
