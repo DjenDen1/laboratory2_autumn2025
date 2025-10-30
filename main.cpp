@@ -98,7 +98,6 @@ int main()
             return 1;
         }
         
-        std::cout << "=== Reading IPs from ip_filter.tsv ===" << std::endl;
         
     
         std::string line;
@@ -109,8 +108,7 @@ int main()
             ip_pool.push_back(ip_parts);
         }
         
-       // file.close();
-        
+
       
 
         std::sort(ip_pool.begin(), ip_pool.end(),compare_logicIPV);
@@ -122,13 +120,7 @@ int main()
             std::cout << ip[0] << "." << ip[1] << "." << ip[2] << "." << ip[3] << std::endl;
         }
         
-       /*
-         for(int i = 0; i < ip_pool.size(); i++) {
-            const auto& ip = ip_pool[i];
-            std::cout << ip[0] << "." << ip[1] << "." << ip[2] << "." << ip[3] << std::endl;
-        }
-        */
-        
+
         std::cout << "\n=== IPs with first byte = 1 ===" << std::endl;
         int count_1 = 0;
         for(const auto& ip : ip_pool) {
@@ -162,7 +154,7 @@ int main()
                 }
             }
         }
-        //std::cout << "Total: " << count_46 << " IPs" << std::endl;
+
         
     } catch(const std::exception &e) {
         std::cerr << "Error: " << e.what() << std::endl;
