@@ -27,8 +27,8 @@ jobs:
       - name: Build with CMake
         run: cmake --build build --config Release
 
-      - name: List build contents
-        run: ls -la build/  # Для отладки - посмотрим что собралось
+      - name: List build contents (Windows)
+        run: dir build /B  
 
       - name: Upload Windows Artifacts
         uses: actions/upload-artifact@v4
@@ -56,8 +56,8 @@ jobs:
       - name: Build project
         run: cmake --build build --config Release
 
-      - name: List build contents
-        run: ls -la build/  # Для отладки
+      - name: List build contents (Linux)
+        run: ls -la build/  
 
       - name: Upload Linux Artifacts
         uses: actions/upload-artifact@v4
@@ -110,8 +110,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./windows-artifacts/Release/your-executable.exe  # Уточните путь!
-          asset_name: your-app-windows.exe
+          asset_path: ./windows-artifacts/Release/laboratory2.exe  # Уточните путь после отладки
+          asset_name: laboratory2.exe
           asset_content_type: application/octet-stream
 
       - name: Upload Linux Binary
@@ -120,6 +120,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./linux-artifacts/your-executable  # Уточните путь!
+          asset_path: ./linux-artifacts/laboratory2  # Уточните путь после отладки
           asset_name: your-app-linux
           asset_content_type: application/octet-stream

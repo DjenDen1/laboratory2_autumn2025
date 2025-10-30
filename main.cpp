@@ -31,6 +31,7 @@ auto primitive_compare(uniq_type0 identificator1, uniq_type1 identificator2)
 }
 
 template<typename uniq_type0 , typename uniq_type1>
+
 constexpr bool is_same_types(uniq_type0  variable1 , uniq_type1 variable2)
 {
     return std::is_same_v<uniq_type0 , uniq_type1>;
@@ -89,7 +90,6 @@ auto ip_to_tuple(const std::vector<std::string>& ip_parts)
 int main()
 {
     try {
-
         std::vector<std::vector<std::string>> ip_pool;
         std::ifstream file("ip_filter.txt");
         
