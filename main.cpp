@@ -131,6 +131,7 @@ int main()
         }
         std::cout << "Total: " << count_1 << " IPs" << std::endl;
         
+        
       
         std::cout << "\n=== IPs with first byte = 46 and second = 70 ===" << std::endl;
         int count_46_70 = 0;
