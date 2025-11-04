@@ -15,17 +15,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      - name: Verify ip_filter.tsv exists
-        run: |
-          if (Test-Path ip_filter.tsv) {
-            echo "ip_filter.tsv found"
-            Get-Content ip_filter.tsv | Select-Object -First 3
-          } else {
-            echo "ERROR: ip_filter.tsv not found!"
-            dir
-            exit 1
-          }
-      
       - name: Clean build directory
         run: |
           if (Test-Path build) {
@@ -38,38 +27,27 @@ jobs:
       - name: Build with CMake
         run: cmake --build build --config Release
 
-      - name: Create Windows release package
+      - name: Create Windows release folder
         run: |
-          mkdir windows-package
-          copy build\Release\laboratory2.exe windows-package\
-          copy ip_filter.tsv windows-package\
-          echo "Windows release package created"
+          mkdir windows-release
+          copy build\Release\laboratory2.exe windows-release\
+          copy ip_filter.tsv windows-release\
+          echo "Windows release folder created"
 
       - name: List Windows release contents
-        run: dir windows-package\
+        run: dir windows-release\
 
       - name: Upload Windows Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: windows-package
-          path: windows-package/
+          name: windows-release
+          path: windows-release/
 
   build-linux:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Verify ip_filter.tsv exists
-        run: |
-          if [ -f "ip_filter.tsv" ]; then
-            echo "ip_filter.tsv found"
-            head -3 ip_filter.tsv
-          else
-            echo "ERROR: ip_filter.tsv not found!"
-            ls -la
-            exit 1
-          fi
 
       - name: Clean build directory
         run: rm -rf build
@@ -85,22 +63,22 @@ jobs:
       - name: Build project
         run: cmake --build build --config Release
 
-      - name: Create Linux release package
+      - name: Create Linux release folder
         run: |
-          mkdir linux-package
-          cp build/laboratory2 linux-package/
-          cp ip_filter.tsv linux-package/
-          chmod +x linux-package/laboratory2
-          echo "Linux release package created"
+          mkdir linux-release
+          cp build/laboratory2 linux-release/
+          cp ip_filter.tsv linux-release/
+          chmod +x linux-release/laboratory2
+          echo "Linux release folder created"
 
       - name: List Linux release contents
-        run: ls -la linux-package/
+        run: ls -la linux-release/
 
       - name: Upload Linux Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: linux-package
-          path: linux-package/
+          name: linux-release
+          path: linux-release/
 
   create-release:
     needs: [build-windows, build-linux]  
@@ -114,53 +92,36 @@ jobs:
       - name: Download Windows Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: windows-package
-          path: windows-package
+          name: windows-release
+          path: windows-release
 
       - name: Download Linux Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: linux-package
-          path: linux-package
+          name: linux-release
+          path: linux-release
 
-      - name: Debug - List all files
+      - name: Debug - List downloaded files
         run: |
-          echo "=== Full file structure ==="
-          find . -type f -name "*laboratory2*" -o -name "*ip_filter*" -o -name "*.exe" -o -name "*.tsv"
-          echo "=== Windows package ==="
-          find windows-package -type f
-          echo "=== Linux package ==="
-          find linux-package -type f
+          echo "Windows release contents:"
+          ls -la windows-release/
+          echo "Linux release contents:"
+          ls -la linux-release/
 
-      - name: Verify exact file names
+      - name: Create release archives
         run: |
-          echo "=== Exact file names ==="
-          ls -la windows-package/
-          ls -la linux-package/
+          # Создаем zip архив для Windows
+          cd windows-release
+          zip -r ../laboratory2-windows.zip .
+          cd ..
           
-          echo "Checking for laboratory2.exe..."
-          if [ -f "windows-package/laboratory2.exe" ]; then
-            echo "✓ laboratory2.exe found"
-          else
-            echo "✗ laboratory2.exe NOT found"
-            find windows-package -name "*.exe"
-          fi
+          # Создаем tar.gz архив для Linux
+          cd linux-release
+          tar -czf ../laboratory2-linux.tar.gz .
+          cd ..
           
-          echo "Checking for laboratory2 (Linux)..."
-          if [ -f "linux-package/laboratory2" ]; then
-            echo "✓ laboratory2 found"
-          else
-            echo "✗ laboratory2 NOT found"
-            find linux-package -name "laboratory2"
-          fi
-          
-          echo "Checking for ip_filter.tsv..."
-          if [ -f "windows-package/ip_filter.tsv" ] && [ -f "linux-package/ip_filter.tsv" ]; then
-            echo "✓ ip_filter.tsv found in both packages"
-          else
-            echo "✗ ip_filter.tsv missing"
-            find . -name "ip_filter.tsv"
-          fi
+          echo "Release archives created"
+          ls -la *.zip *.tar.gz
 
       - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v1
@@ -170,24 +131,31 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            windows-package/laboratory2.exe
-            windows-package/ip_filter.tsv
-            linux-package/laboratory2
-            linux-package/ip_filter.tsv
+            laboratory2-windows.zip
+            laboratory2-linux.tar.gz
           body: |
-            ## Laboratory 2 Release v${{ github.run_number }}
+            Laboratory 2 Release v${{ github.run_number }}
             
-            ### Windows:
-            Download both files:
-            - `laboratory2.exe` - Main executable
-            - `ip_filter.tsv` - Data file
+            Download Ready-to-Use Packages:
             
-            Place them in the same folder and run `laboratory2.exe`
+            For Windows:
+            - Download laboratory2-windows.zip
+            - Extract the archive
+            - Run laboratory2.exe
+            - Includes: laboratory2.exe + ip_filter.tsv
             
-            ### Linux:
-            Download both files:
-            - `laboratory2` - Main executable  
-            - `ip_filter.tsv` - Data file
+            For Linux:
+            - Download laboratory2-linux.tar.gz  
+            - Extract the archive: tar -xzf laboratory2-linux.tar.gz
+            - Run: ./laboratory2
+            - Includes: laboratory2 + ip_filter.tsv
             
-            Make executable: `chmod +x laboratory2`
-            Then run: `./laboratory2`
+            Quick Start:
+            1. Download the package for your OS
+            2. Extract to any folder
+            3. Run the executable
+            4. No additional files needed
+            
+            Build Info:
+            - Build Number: ${{ github.run_number }}
+            - Commit: ${{ github.sha }}
