@@ -111,5 +111,16 @@ jobs:
             windows-artifacts/Release/ip_filter.tsv
             linux-artifacts/laboratory2
             linux-artifacts/ip_filter.tsv
+          body: |
+
+            Download both files:
+              - `laboratory2.exe`
+              - `ip_filter.tsv`
+
+            Download both files:
+              - `laboratory2`
+              - `ip_filter.tsv`
+              
+            
 
 #release-drafter

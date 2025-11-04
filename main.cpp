@@ -6,6 +6,7 @@
 #include <tuple>
 #include <cassert>
 
+
 template<typename uniq_type0 , typename uniq_type1>
 auto primitive_compare(uniq_type0 identificator1, uniq_type1 identificator2)
 {
