@@ -15,6 +15,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
+      - name: Verify ip_filter.tsv exists
+        run: |
+          if (Test-Path ip_filter.tsv) {
+            echo "ip_filter.tsv found"
+            Get-Content ip_filter.tsv | Select-Object -First 3
+          } else {
+            echo "ERROR: ip_filter.tsv not found!"
+            dir
+            exit 1
+          }
+      
       - name: Clean build directory
         run: |
           if (Test-Path build) {
@@ -48,6 +59,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Verify ip_filter.tsv exists
+        run: |
+          if [ -f "ip_filter.tsv" ]; then
+            echo "ip_filter.tsv found"
+            head -3 ip_filter.tsv
+          else
+            echo "ERROR: ip_filter.tsv not found!"
+            ls -la
+            exit 1
+          fi
 
       - name: Clean build directory
         run: rm -rf build
@@ -101,36 +123,43 @@ jobs:
           name: linux-package
           path: linux-package
 
-      - name: Debug - List downloaded files
+      - name: Debug - List all files
         run: |
-          echo "=== Windows package contents ==="
+          echo "=== Full file structure ==="
+          find . -type f -name "*laboratory2*" -o -name "*ip_filter*" -o -name "*.exe" -o -name "*.tsv"
+          echo "=== Windows package ==="
           find windows-package -type f
-          echo "=== Linux package contents ==="
+          echo "=== Linux package ==="
           find linux-package -type f
-          echo "=== Current directory ==="
-          pwd
-          ls -la
 
-      - name: Verify files exist
+      - name: Verify exact file names
         run: |
-          echo "Checking Windows files:"
+          echo "=== Exact file names ==="
           ls -la windows-package/
-          echo "Checking Linux files:"
           ls -la linux-package/
           
-          # Проверяем что файлы существуют
-          if [ -f "windows-package/laboratory2.exe" ] && [ -f "windows-package/ip_filter.tsv" ]; then
-            echo "✓ Windows files found"
+          echo "Checking for laboratory2.exe..."
+          if [ -f "windows-package/laboratory2.exe" ]; then
+            echo "✓ laboratory2.exe found"
           else
-            echo "✗ Windows files missing"
-            exit 1
+            echo "✗ laboratory2.exe NOT found"
+            find windows-package -name "*.exe"
           fi
           
-          if [ -f "linux-package/laboratory2" ] && [ -f "linux-package/ip_filter.tsv" ]; then
-            echo "✓ Linux files found"
+          echo "Checking for laboratory2 (Linux)..."
+          if [ -f "linux-package/laboratory2" ]; then
+            echo "✓ laboratory2 found"
           else
-            echo "✗ Linux files missing"
-            exit 1
+            echo "✗ laboratory2 NOT found"
+            find linux-package -name "laboratory2"
+          fi
+          
+          echo "Checking for ip_filter.tsv..."
+          if [ -f "windows-package/ip_filter.tsv" ] && [ -f "linux-package/ip_filter.tsv" ]; then
+            echo "✓ ip_filter.tsv found in both packages"
+          else
+            echo "✗ ip_filter.tsv missing"
+            find . -name "ip_filter.tsv"
           fi
 
       - name: Create Release and Upload Assets
@@ -149,21 +178,16 @@ jobs:
             ## Laboratory 2 Release v${{ github.run_number }}
             
             ### Windows:
-            Download both files and place them in the same folder:
+            Download both files:
             - `laboratory2.exe` - Main executable
             - `ip_filter.tsv` - Data file
             
-            Then run: `laboratory2.exe`
+            Place them in the same folder and run `laboratory2.exe`
             
             ### Linux:
-            Download both files and place them in the same folder:
+            Download both files:
             - `laboratory2` - Main executable  
             - `ip_filter.tsv` - Data file
             
             Make executable: `chmod +x laboratory2`
             Then run: `./laboratory2`
-            
-            ### Build Info:
-            - Build Number: ${{ github.run_number }}
-            - Commit: ${{ github.sha }}
-            - Trigger: ${{ github.event_name }}
