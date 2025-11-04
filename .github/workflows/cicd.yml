@@ -99,9 +99,9 @@ jobs:
           echo "Linux artifacts:"
           find linux-artifacts -type f -executable
 
-      - name: Create Release and Upload Assets
-        uses: softprops/action-gh-release@v1
-        with:
+       - name: Create Release and Upload Assets
+         uses: softprops/action-gh-release@v1
+         with:
           tag_name: v${{ github.run_number }}
           name: Release v${{ github.run_number }} 
           draft: false
@@ -115,19 +115,24 @@ jobs:
             ## Laboratory 2 Release v${{ github.run_number }}
             
             ### Windows:
-            Download both files:
-            - `laboratory2.exe`
-            - `ip_filter.tsv`
+            Download both files and place them in the same folder:
+            - `laboratory2.exe` - Main executable
+            - `ip_filter.tsv` - Data file
             
-            Place them in the same folder and run `laboratory2.exe`
+            Then run: `laboratory2.exe`
             
             ### Linux:
-            Download both files:
-            - `laboratory2` 
-            - `ip_filter.tsv`
+            Download both files and place them in the same folder:
+            - `laboratory2` - Main executable  
+            - `ip_filter.tsv` - Data file
             
             Make executable: `chmod +x laboratory2`
-            Run: `./laboratory2`
+            Then run: `./laboratory2`
+            
+            ### Build Info:
+            - Build Number: ${{ github.run_number }}
+            - Commit: ${{ github.sha }}
+            - Trigger: ${{ github.event_name }}
 
               
             
