@@ -120,6 +120,10 @@ jobs:
             Download both files:
               - `laboratory2`
               - `ip_filter.tsv`
+            
+            Make executable: `chmod +x laboratory2`
+            Run: `./laboratory2`
+
               
             
 
