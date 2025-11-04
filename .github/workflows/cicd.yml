@@ -28,7 +28,7 @@ jobs:
         run: cmake --build build --config Release
 
       - name: Copy input file for Windows
-        run: copy ip_filter.txt build\ip_filter.txt
+        run: copy ip_filter.tsv build\ip_filter.tsv
 
       - name: List build contents (Windows)
         run: dir build\
@@ -60,7 +60,7 @@ jobs:
         run: cmake --build build --config Release
 
       - name: Copy input file for Linux
-        run: cp ip_filter.txt build/ip_filter.txt
+        run: cp ip_filter.tsv build/ip_filter.tsv
 
       - name: List build contents (Linux)
         run: ls -la build/  

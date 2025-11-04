@@ -91,7 +91,7 @@ int main()
 {
     try {
         std::vector<std::vector<std::string>> ip_pool;
-        std::ifstream file("ip_filter.txt");
+        std::ifstream file("ip_filter.tsv");
         
         if (!file.is_open()) {
             std::cerr << "Error: Cannot open ip_filter.tsv" << std::endl;
