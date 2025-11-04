@@ -43,6 +43,7 @@ auto compare_logicIPV = [](const std::vector<std::string>& a, const std::vector<
            std::make_tuple(std::stoi(b[0]), std::stoi(b[1]), std::stoi(b[2]), std::stoi(b[3]));
 };
 
+
 bool vectors_equal(const std::vector<std::string>& v1, const std::vector<std::string>& v2)
 {
     if(v1.size() != v2.size()) 
