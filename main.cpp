@@ -7,7 +7,6 @@
 #include <cassert>
 
 template<typename uniq_type0 , typename uniq_type1>
-
 auto primitive_compare(uniq_type0 identificator1, uniq_type1 identificator2)
 {
     try
@@ -31,7 +30,6 @@ auto primitive_compare(uniq_type0 identificator1, uniq_type1 identificator2)
 }
 
 template<typename uniq_type0 , typename uniq_type1>
-
 constexpr bool is_same_types(uniq_type0  variable1 , uniq_type1 variable2)
 {
     return std::is_same_v<uniq_type0 , uniq_type1>;
