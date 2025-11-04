@@ -58,6 +58,7 @@ bool vectors_equal(const std::vector<std::string>& v1, const std::vector<std::st
 }
 
 
+
 std::vector<std::string> split(const std::string &str, char d)
 {
     std::vector<std::string> r;
@@ -113,39 +114,31 @@ int main()
 
         std::sort(ip_pool.begin(), ip_pool.end(),compare_logicIPV);
 
-        std::cout << "\n=== First 10 sorted IP addresses ===" << std::endl;
-        
-        for(int i = 0; i < std::min(10, (int)ip_pool.size()); i++) {
-            const auto& ip = ip_pool[i];
-            std::cout << ip[0] << "." << ip[1] << "." << ip[2] << "." << ip[3] << std::endl;
-        }
-        
+        std::cout << std::endl;
 
-        std::cout << "\n=== IPs with first byte = 1 ===" << std::endl;
-        int count_1 = 0;
+        std::cout << " IPs with first byte  1 " << std::endl;
+        
         for(const auto& ip : ip_pool) {
             if(std::stoi(ip[0]) == 1) {
                 std::cout << ip[0] << "." << ip[1] << "." << ip[2] << "." << ip[3] << std::endl;
-                count_1++;
+
             }
         }
-        std::cout << "Total: " << count_1 << " IPs" << std::endl;
         
         
-      
-        std::cout << "\n=== IPs with first byte = 46 and second = 70 ===" << std::endl;
-        int count_46_70 = 0;
+        std::cout << std::endl;
+
+        std::cout << "=== IPs with first byte = 46 and second = 70 ===" << std::endl;
         for(const auto& ip : ip_pool) {
             if(std::stoi(ip[0]) == 46 && std::stoi(ip[1]) == 70) {
                 std::cout << ip[0] << "." << ip[1] << "." << ip[2] << "." << ip[3]<<std::endl;
-                count_46_70++;
             }
         }
-        std::cout << "Total: " << count_46_70 << " IPs" << std::endl;
         
 
+        std::cout << std::endl;
 
-        std::cout << "\n=== First 10 IPs with any byte = 46 ===" << std::endl;
+        std::cout << "=== First  IPs with any byte = 46 ===" << std::endl;
      
         for(const auto& ip : ip_pool) {
             for(const auto& part : ip) {
@@ -194,6 +187,7 @@ int main()
 
     std::vector<int> vector_0 = {};
     std::vector<int> vector_1 = {};
+
     assert(is_same_types(vector_0 , vector_1) == true);
 
     assert(is_same_types(std::string("Hello") , std::string ("World")) == true);
