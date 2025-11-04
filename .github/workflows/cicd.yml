@@ -106,20 +106,25 @@ jobs:
           name: Release v${{ github.run_number }} 
           draft: false
           prerelease: false
-          files: | 
-            windows-artifacts/Release/laboratory2.exe
-            windows-artifacts/Release/ip_filter.tsv
-            linux-artifacts/laboratory2
-            linux-artifacts/ip_filter.tsv
+          files: |
+            windows-package/laboratory2.exe
+            windows-package/ip_filter.tsv
+            linux-package/laboratory2
+            linux-package/ip_filter.tsv
           body: |
-
+            ## Laboratory 2 Release v${{ github.run_number }}
+            
+            ### Windows:
             Download both files:
-              - `laboratory2.exe`
-              - `ip_filter.tsv`
-
+            - `laboratory2.exe`
+            - `ip_filter.tsv`
+            
+            Place them in the same folder and run `laboratory2.exe`
+            
+            ### Linux:
             Download both files:
-              - `laboratory2`
-              - `ip_filter.tsv`
+            - `laboratory2` 
+            - `ip_filter.tsv`
             
             Make executable: `chmod +x laboratory2`
             Run: `./laboratory2`
