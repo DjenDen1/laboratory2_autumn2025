@@ -123,7 +123,7 @@ jobs:
           echo "Release archives created"
           ls -la *.zip *.tar.gz
 
-      - name: Create Release and Upload Assets
+            - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ github.run_number }}
@@ -132,27 +132,18 @@ jobs:
           prerelease: false
           files: |
             windows-release/laboratory2.exe
-            windows-release/ip_filter.tsv
             linux-release/laboratory2
-            linux-release/ip_filter.tsv
+            ip_filter.tsv
           body: |
             Laboratory 2 Release v${{ github.run_number }}
             
-            Download individual files for your platform:
-            
-            For Windows - download both files:
-            - laboratory2.exe
-            - ip_filter.tsv
-            
-            For Linux - download both files:
-            - laboratory2
-            - ip_filter.tsv
+            Download files:
+            - laboratory2.exe (Windows executable)
+            - laboratory2 (Linux executable)
+            - ip_filter.tsv (data file - needed for both platforms)
             
             Usage:
-            1. Download both files for your platform
-            2. Place them in the same folder
-            3. For Linux: chmod +x laboratory2
-            4. Run the executable
+            Place ip_filter.tsv in the same folder as the executable
             
             Build Info:
             - Build Number: ${{ github.run_number }}
