@@ -131,30 +131,28 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            laboratory2-windows.zip
-            laboratory2-linux.tar.gz
+            windows-release/laboratory2.exe
+            windows-release/ip_filter.tsv
+            linux-release/laboratory2
+            linux-release/ip_filter.tsv
           body: |
             Laboratory 2 Release v${{ github.run_number }}
             
-            Download Ready-to-Use Packages:
+            Download individual files for your platform:
             
-            For Windows:
-            - Download laboratory2-windows.zip
-            - Extract the archive
-            - Run laboratory2.exe
-            - Includes: laboratory2.exe + ip_filter.tsv
+            For Windows - download both files:
+            - laboratory2.exe
+            - ip_filter.tsv
             
-            For Linux:
-            - Download laboratory2-linux.tar.gz  
-            - Extract the archive: tar -xzf laboratory2-linux.tar.gz
-            - Run: ./laboratory2
-            - Includes: laboratory2 + ip_filter.tsv
+            For Linux - download both files:
+            - laboratory2
+            - ip_filter.tsv
             
-            Quick Start:
-            1. Download the package for your OS
-            2. Extract to any folder
-            3. Run the executable
-            4. No additional files needed
+            Usage:
+            1. Download both files for your platform
+            2. Place them in the same folder
+            3. For Linux: chmod +x laboratory2
+            4. Run the executable
             
             Build Info:
             - Build Number: ${{ github.run_number }}
