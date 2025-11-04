@@ -123,7 +123,7 @@ jobs:
           echo "Release archives created"
           ls -la *.zip *.tar.gz
 
-            - name: Create Release and Upload Assets
+      - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ github.run_number }}
