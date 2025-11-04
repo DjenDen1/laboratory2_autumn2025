@@ -27,17 +27,21 @@ jobs:
       - name: Build with CMake
         run: cmake --build build --config Release
 
-      - name: Copy input file for Windows
-        run: copy ip_filter.tsv build\ip_filter.tsv
+      - name: Create Windows release package
+        run: |
+          mkdir windows-package
+          copy build\Release\laboratory2.exe windows-package\
+          copy ip_filter.tsv windows-package\
+          echo "Windows release package created"
 
-      - name: List build contents (Windows)
-        run: dir build\
+      - name: List Windows release contents
+        run: dir windows-package\
 
       - name: Upload Windows Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: windows-build
-          path: build/
+          name: windows-package
+          path: windows-package/
 
   build-linux:
     runs-on: ubuntu-latest
@@ -59,17 +63,22 @@ jobs:
       - name: Build project
         run: cmake --build build --config Release
 
-      - name: Copy input file for Linux
-        run: cp ip_filter.tsv build/ip_filter.tsv
+      - name: Create Linux release package
+        run: |
+          mkdir linux-package
+          cp build/laboratory2 linux-package/
+          cp ip_filter.tsv linux-package/
+          chmod +x linux-package/laboratory2
+          echo "Linux release package created"
 
-      - name: List build contents (Linux)
-        run: ls -la build/  
+      - name: List Linux release contents
+        run: ls -la linux-package/
 
       - name: Upload Linux Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: linux-build
-          path: build/
+          name: linux-package
+          path: linux-package/
 
   create-release:
     needs: [build-windows, build-linux]  
@@ -83,25 +92,50 @@ jobs:
       - name: Download Windows Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: windows-build
-          path: windows-artifacts
+          name: windows-package
+          path: windows-package
 
       - name: Download Linux Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: linux-build
-          path: linux-artifacts
+          name: linux-package
+          path: linux-package
 
       - name: Debug - List downloaded files
         run: |
-          echo "Windows artifacts:"
-          find windows-artifacts -name "*.exe" -o -name "*.dll"
-          echo "Linux artifacts:"
-          find linux-artifacts -type f -executable
+          echo "=== Windows package contents ==="
+          find windows-package -type f
+          echo "=== Linux package contents ==="
+          find linux-package -type f
+          echo "=== Current directory ==="
+          pwd
+          ls -la
 
-       - name: Create Release and Upload Assets
-         uses: softprops/action-gh-release@v1
-         with:
+      - name: Verify files exist
+        run: |
+          echo "Checking Windows files:"
+          ls -la windows-package/
+          echo "Checking Linux files:"
+          ls -la linux-package/
+          
+          # Проверяем что файлы существуют
+          if [ -f "windows-package/laboratory2.exe" ] && [ -f "windows-package/ip_filter.tsv" ]; then
+            echo "✓ Windows files found"
+          else
+            echo "✗ Windows files missing"
+            exit 1
+          fi
+          
+          if [ -f "linux-package/laboratory2" ] && [ -f "linux-package/ip_filter.tsv" ]; then
+            echo "✓ Linux files found"
+          else
+            echo "✗ Linux files missing"
+            exit 1
+          fi
+
+      - name: Create Release and Upload Assets
+        uses: softprops/action-gh-release@v1
+        with:
           tag_name: v${{ github.run_number }}
           name: Release v${{ github.run_number }} 
           draft: false
@@ -133,8 +167,3 @@ jobs:
             - Build Number: ${{ github.run_number }}
             - Commit: ${{ github.sha }}
             - Trigger: ${{ github.event_name }}
-
-              
-            
-
-#release-drafter
